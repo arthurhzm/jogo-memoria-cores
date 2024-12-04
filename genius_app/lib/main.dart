@@ -16,7 +16,31 @@ class GeniusGame extends StatelessWidget {
   }
 }
 
-class GeniusHome extends StatelessWidget {
+class GeniusHome extends StatefulWidget {
+  @override
+  _GeniusHomeState createState() => _GeniusHomeState();
+}
+
+class _GeniusHomeState extends State<GeniusHome> {
+  Map<String, bool> activeColors = {
+    'red': false,
+    'green': false,
+    'blue': false,
+    'yellow': false,
+  };
+
+  void _activateColor(String color) async {
+    setState(() {
+      activeColors[color] = true;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    setState(() {
+      activeColors[color] = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,20 +57,20 @@ class GeniusHome extends StatelessWidget {
           crossAxisSpacing: 8,
           children: [
             GeniusButton(
-              color: Colors.red,
-              onTap: () => print("Red"),
+              color: activeColors['red']! ? Colors.red[700]! : Colors.red,
+              onTap: () => _activateColor('red'),
             ),
             GeniusButton(
-              color: Colors.green,
-              onTap: () => print("Green"),
+              color: activeColors['green']! ? Colors.green[700]! : Colors.green,
+              onTap: () => _activateColor('green'),
             ),
             GeniusButton(
-              color: Colors.blue,
-              onTap: () => print("Blue"),
+              color: activeColors['blue']! ? Colors.blue[700]! : Colors.blue,
+              onTap: () => _activateColor('blue'),
             ),
             GeniusButton(
-              color: Colors.yellow,
-              onTap: () => print("Yellow"),
+              color: activeColors['yellow']! ? Colors.yellow[700]! : Colors.yellow,
+              onTap: () => _activateColor('yellow'),
             ),
           ],
         ),
