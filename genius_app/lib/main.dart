@@ -29,7 +29,24 @@ class _GeniusHomeState extends State<GeniusHome> {
     'yellow': false,
   };
 
-  void _activateColor(String color) async {
+  List<String> sequence = [];
+  bool isUserTurn = false;
+
+  void addRandomColor() {
+    final random = activeColors.keys.toList()..shuffle();
+    sequence.add(random.first);
+  }
+
+  void playSequence() async {
+    isUserTurn = false;
+    for (final color in sequence) {
+      await _activateColor(color);
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+    isUserTurn = true;
+  }
+
+  Future<void> _activateColor(String color) async {
     setState(() {
       activeColors[color] = true;
     });
@@ -41,6 +58,11 @@ class _GeniusHomeState extends State<GeniusHome> {
     });
   }
 
+  void startNewRound() {
+    addRandomColor();
+    playSequence();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,34 +70,112 @@ class _GeniusHomeState extends State<GeniusHome> {
         title: const Text('Genius Game'),
       ),
       body: Center(
-          child: SizedBox(
-        width: 300,
-        height: 300,
-        child: GridView.count(
-          crossAxisCount: 2,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            GeniusButton(
-              color: activeColors['red']! ? Colors.red[700]! : Colors.red,
-              onTap: () => _activateColor('red'),
+            Container(
+              width: 300,
+              height: 300,
+              child: GridView.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                children: [
+                  GeniusButton(
+                    color: activeColors['red']! ? Colors.redAccent : Colors.red,
+                    onTap: () {
+                      if (isUserTurn) {
+                        _activateColor('red');
+                        _checkColor('red');
+                      }
+                    },
+                  ),
+                  GeniusButton(
+                    color: activeColors['green']!
+                        ? Colors.lightGreen
+                        : Colors.green,
+                    onTap: () {
+                      if (isUserTurn) {
+                        _activateColor('green');
+                        _checkColor('green');
+                      }
+                    },
+                  ),
+                  GeniusButton(
+                    color:
+                        activeColors['blue']! ? Colors.lightBlue : Colors.blue,
+                    onTap: () {
+                      if (isUserTurn) {
+                        _activateColor('blue');
+                        _checkColor('blue');
+                      }
+                    },
+                  ),
+                  GeniusButton(
+                    color: activeColors['yellow']!
+                        ? Colors.yellowAccent
+                        : Colors.yellow,
+                    onTap: () {
+                      if (isUserTurn) {
+                        _activateColor('yellow');
+                        _checkColor('yellow');
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
-            GeniusButton(
-              color: activeColors['green']! ? Colors.green[700]! : Colors.green,
-              onTap: () => _activateColor('green'),
-            ),
-            GeniusButton(
-              color: activeColors['blue']! ? Colors.blue[700]! : Colors.blue,
-              onTap: () => _activateColor('blue'),
-            ),
-            GeniusButton(
-              color: activeColors['yellow']! ? Colors.yellow[700]! : Colors.yellow,
-              onTap: () => _activateColor('yellow'),
+            ElevatedButton(
+              onPressed: startNewRound,
+              child: const Text('Iniciar'),
             ),
           ],
         ),
-      )),
+      ),
     );
+  }
+
+  int userIndex = 0;
+
+  void _checkColor(String color) {
+    if (color == sequence[userIndex]) {
+      userIndex++;
+      if (userIndex == sequence.length) {
+        userIndex = 0;
+        startNewRound();
+      }
+    } else {
+      showGameOver();
+    }
+  }
+
+  void showGameOver() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Game Over'),
+          content: Text('Você errou! Sua pontuação é: ${sequence.length}'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                resetGame();
+              },
+              child: const Text('Try again'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void resetGame() {
+    setState(() {
+      sequence.clear();
+      userIndex = 0;
+      isUserTurn = false;
+    });
   }
 }
 
