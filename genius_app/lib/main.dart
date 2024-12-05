@@ -137,11 +137,12 @@ class _GeniusHomeState extends State<GeniusHome> {
 
   int userIndex = 0;
 
-  void _checkColor(String color) {
+  void _checkColor(String color) async {
     if (color == sequence[userIndex]) {
       userIndex++;
       if (userIndex == sequence.length) {
         userIndex = 0;
+        await Future.delayed(const Duration(milliseconds: 1000));
         startNewRound();
       }
     } else {
