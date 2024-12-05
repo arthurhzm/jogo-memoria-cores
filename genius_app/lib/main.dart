@@ -103,34 +103,47 @@ class _GeniusHomeState extends State<GeniusHome> {
                   crossAxisSpacing: 8,
                   children: [
                     GeniusButton(
+                      color: activeColors['red']!
+                          ? const Color.fromARGB(255, 117, 1, 1)
+                          : Colors.red,
+                      onTap: () {
+                        if (isUserTurn) {
+                          _activateColor('red');
+                          _checkColor('red');
+                        }
+                      },
+                    ),
+                    GeniusButton(
                       color: activeColors['green']!
-                          ? Colors.lightGreen
+                          ? const Color.fromARGB(255, 48, 90, 0)
                           : Colors.green,
                       onTap: () {
-                        if (isUserTurn) checkUserInput('green');
-                      },
-                    ),
-                    GeniusButton(
-                      color:
-                          activeColors['red']! ? Colors.redAccent : Colors.red,
-                      onTap: () {
-                        if (isUserTurn) checkUserInput('red');
-                      },
-                    ),
-                    GeniusButton(
-                      color: activeColors['yellow']!
-                          ? Colors.yellowAccent
-                          : Colors.yellow,
-                      onTap: () {
-                        if (isUserTurn) checkUserInput('yellow');
+                        if (isUserTurn) {
+                          _activateColor('green');
+                          _checkColor('green');
+                        }
                       },
                     ),
                     GeniusButton(
                       color: activeColors['blue']!
-                          ? Colors.lightBlue
+                          ? const Color.fromARGB(255, 0, 66, 97)
                           : Colors.blue,
                       onTap: () {
-                        if (isUserTurn) checkUserInput('blue');
+                        if (isUserTurn) {
+                          _activateColor('blue');
+                          _checkColor('blue');
+                        }
+                      },
+                    ),
+                    GeniusButton(
+                      color: activeColors['yellow']!
+                          ? const Color.fromARGB(255, 104, 104, 0)
+                          : Colors.yellow,
+                      onTap: () {
+                        if (isUserTurn) {
+                          _activateColor('yellow');
+                          _checkColor('yellow');
+                        }
                       },
                     ),
                   ],
@@ -153,6 +166,7 @@ class _GeniusHomeState extends State<GeniusHome> {
     if (color == sequence[userIndex]) {
       userIndex++;
       if (userIndex == sequence.length) {
+        updateScore();
         userIndex = 0;
         await Future.delayed(const Duration(milliseconds: 1000));
         startNewRound();
@@ -185,6 +199,7 @@ class _GeniusHomeState extends State<GeniusHome> {
 
   void resetGame() {
     setState(() {
+      score = 0;
       sequence.clear();
       userIndex = 0;
       isUserTurn = false;
